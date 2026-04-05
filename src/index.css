@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@utility bg-board {
+  @apply bg-stone-900;
+}
+
+@utility bg-input {
+  @apply bg-stone-800;
+}
+
+body {
+  @apply bg-gray-950 text-stone-50 *:**:[&::-webkit-scrollbar]:hidden;
+}
+
+input,
+textarea,
+button {
+  @apply outline-none
+}
+
+textarea {
+  @apply resize-none;
+}
+
+button {
+  @apply cursor-pointer
+}
