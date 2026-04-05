@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Background, Origin } from "../type";
 import { cn, today } from "../utils";
 import { useTaskStore } from "../use-task-store";
@@ -27,7 +28,13 @@ export function Card({
   const isToday = createdDate === today();
 
   return (
-    <div className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shrink-0">
+    <motion.div
+      className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shrink-0"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+    >
       <div className="px-4 pt-3 pb-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
@@ -101,44 +108,60 @@ export function Card({
           </button>
         </div>
 
-        {completedDate ? (
-          <LabeledTextarea
-            label="達成できた要因"
-            value={currentBackground.purpose}
-            onChange={(v) =>
-              updateBackground(taskId, currentBackground.createdDate, {
-                ...currentBackground,
-                purpose: v,
-              })
-            }
-          />
-        ) : (
-          <>
-            <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">達成までの仮定（改善）</p>
-            <div className="mb-4">
-              <HypothesesEditor
-                hypotheses={currentBackground.hypotheses}
-                onChange={(hypotheses) =>
+        <AnimatePresence mode="wait" initial={false}>
+          {completedDate ? (
+            <motion.div
+              key="completed"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+            >
+              <LabeledTextarea
+                label="達成できた要因"
+                value={currentBackground.purpose}
+                onChange={(v) =>
                   updateBackground(taskId, currentBackground.createdDate, {
                     ...currentBackground,
-                    hypotheses,
+                    purpose: v,
                   })
                 }
               />
-            </div>
-            <LabeledTextarea
-              label="次回の実行計画"
-              value={currentBackground.plan}
-              onChange={(v) =>
-                updateBackground(taskId, currentBackground.createdDate, {
-                  ...currentBackground,
-                  plan: v,
-                })
-              }
-            />
-          </>
-        )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="incomplete"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+            >
+              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">達成までの仮定（改善）</p>
+              <div className="mb-4">
+                <HypothesesEditor
+                  hypotheses={currentBackground.hypotheses}
+                  onChange={(hypotheses) =>
+                    updateBackground(taskId, currentBackground.createdDate, {
+                      ...currentBackground,
+                      hypotheses,
+                    })
+                  }
+                />
+              </div>
+              <LabeledTextarea
+                label="次回の実行計画"
+                value={currentBackground.plan}
+                onChange={(v) =>
+                  updateBackground(taskId, currentBackground.createdDate, {
+                    ...currentBackground,
+                    plan: v,
+                  })
+                }
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }

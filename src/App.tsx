@@ -1,25 +1,21 @@
 import { useTaskStore } from "./use-task-store";
-import { TaskList } from "./components";
+import { TaskList, FeedbackButton } from "./components";
 import { useEffect, useState } from "react";
 import { today, buildReportText } from "./utils";
 
 export default function App() {
   const [synopsis, setSynopsis] = useState("");
   const { tasks } = useTaskStore();
-  const remainingTasks = Object.values(tasks).filter(
+  const remainingTasks = tasks.filter(
     (t) =>
       (t.completedDate === today() || !t.completedDate) &&
       t.createdDate !== today(),
   );
-  const newTasks = Object.values(tasks).filter(
-    (t) => t.createdDate === today(),
-  );
+  const newTasks = tasks.filter((t) => t.createdDate === today());
 
   const handleSave = () => {
-    const filtered = Object.fromEntries(
-      Object.entries(tasks).filter(
-        ([, t]) => !t.completedDate || t.completedDate >= today(),
-      ),
+    const filtered = tasks.filter(
+      (t) => !t.completedDate || t.completedDate >= today(),
     );
     localStorage.setItem("tasks", JSON.stringify(filtered));
   };
@@ -60,14 +56,16 @@ export default function App() {
           placeholder="今日の業務内容を入力..."
         />
         <div className="grid grid-cols-2 gap-2">
-          <button
-            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-2.5 rounded-xl text-sm font-medium"
+          <FeedbackButton
+            label="保存"
+            doneLabel="保存しました"
+            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-2.5 rounded-xl text-sm font-medium transition-colors"
             onClick={handleSave}
-          >
-            保存
-          </button>
-          <button
-            className="bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-medium"
+          />
+          <FeedbackButton
+            label="日報をコピー"
+            doneLabel="コピーしました"
+            className="bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-medium transition-colors"
             onClick={async () => {
               if (!synopsis.trim()) {
                 alert("業務内容を入力してください");
@@ -77,9 +75,7 @@ export default function App() {
                 buildReportText(synopsis, remainingTasks, newTasks),
               );
             }}
-          >
-            日報をコピー
-          </button>
+          />
         </div>
       </div>
 

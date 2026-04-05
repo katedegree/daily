@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { Background, Origin, Task } from "./type";
 import { today } from "./utils";
 
-const generateId = (existing: Record<string, Task>): string => {
+const generateId = (existing: Task[]): string => {
   const chars = "0123456789";
   let id: string;
   do {
@@ -10,7 +10,7 @@ const generateId = (existing: Record<string, Task>): string => {
       { length: 4 },
       () => chars[Math.floor(Math.random() * chars.length)],
     ).join("");
-  } while (id in existing);
+  } while (existing.some((t) => t.id === id));
   return id;
 };
 
@@ -25,7 +25,7 @@ const createTask = (id: string): Task => ({
 });
 
 interface TaskStore {
-  tasks: Record<string, Task>;
+  tasks: Task[];
   storeTask: () => void;
   destoryTask: (taskId: string) => void;
   toggleCompleted: (taskId: string) => void;
@@ -38,57 +38,44 @@ interface TaskStore {
 }
 
 export const useTaskStore = create<TaskStore>((set) => ({
-  tasks: {},
+  tasks: [],
 
   storeTask: () =>
     set((prev) => {
       const id = generateId(prev.tasks);
-      return { tasks: { [id]: createTask(id), ...prev.tasks } };
+      return { tasks: [createTask(id), ...prev.tasks] };
     }),
 
   destoryTask: (taskId) =>
-    set((prev) => {
-      const newTasks = { ...prev.tasks };
-      delete newTasks[taskId];
-      return { tasks: newTasks };
-    }),
+    set((prev) => ({
+      tasks: prev.tasks.filter((t) => t.id !== taskId),
+    })),
 
   toggleCompleted: (taskId) =>
     set((prev) => ({
-      tasks: {
-        ...prev.tasks,
-        [taskId]: {
-          ...prev.tasks[taskId],
-          completedDate: prev.tasks[taskId].completedDate ? null : today(),
-        },
-      },
+      tasks: prev.tasks.map((t) =>
+        t.id === taskId
+          ? { ...t, completedDate: t.completedDate ? null : today() }
+          : t,
+      ),
     })),
 
   updateOrigin: (taskId, origin) =>
-    set((prev) => {
-      const task = prev.tasks[taskId] ?? createTask(taskId);
-      return {
-        tasks: {
-          ...prev.tasks,
-          [taskId]: { ...task, origin },
-        },
-      };
-    }),
+    set((prev) => ({
+      tasks: prev.tasks.map((t) =>
+        t.id === taskId ? { ...t, origin } : t,
+      ),
+    })),
 
   updateBackground: (taskId, createdDate, background) =>
-    set((prev) => {
-      const task = prev.tasks[taskId] ?? createTask(taskId);
-      const exists = task.background.some((b) => b.createdDate === createdDate);
-      const newBackground = exists
-        ? task.background.map((b) =>
-            b.createdDate === createdDate ? background : b,
-          )
-        : [...task.background, background];
-      return {
-        tasks: {
-          ...prev.tasks,
-          [taskId]: { ...task, background: newBackground },
-        },
-      };
-    }),
+    set((prev) => ({
+      tasks: prev.tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        const exists = t.background.some((b) => b.createdDate === createdDate);
+        const newBackground = exists
+          ? t.background.map((b) => (b.createdDate === createdDate ? background : b))
+          : [...t.background, background];
+        return { ...t, background: newBackground };
+      }),
+    })),
 }));

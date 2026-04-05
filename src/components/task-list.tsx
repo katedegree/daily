@@ -3,6 +3,7 @@ import { today } from "../utils";
 import { useTaskStore } from "../use-task-store";
 import { Card } from "./card";
 import { Plus } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 interface Props {
   tasks: Task[];
@@ -13,7 +14,7 @@ export function TaskList({ tasks, isNew = false }: Props) {
   const { storeTask } = useTaskStore();
 
   return (
-    <div className="flex flex-col gap-3 overflow-y-auto pt-4">
+    <div className="flex flex-col gap-3 overflow-y-auto pt-4 min-h-0">
       {isNew && (
         <button
           type="button"
@@ -24,31 +25,33 @@ export function TaskList({ tasks, isNew = false }: Props) {
           新規作成
         </button>
       )}
-      {tasks.map((task) => {
-        const pastBackground = isNew
-          ? undefined
-          : task.background
-              .filter((b) => b.createdDate !== today())
-              .sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1))[0];
+      <AnimatePresence initial={false}>
+        {tasks.map((task) => {
+          const pastBackground = isNew
+            ? undefined
+            : task.background
+                .filter((b) => b.createdDate !== today())
+                .sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1))[0];
 
-        if (!isNew && !pastBackground) return null;
+          if (!isNew && !pastBackground) return null;
 
-        const currentBackground = task.background.find(
-          (b) => b.createdDate === today(),
-        ) ?? { purpose: "", hypotheses: [""], plan: "", createdDate: today() };
+          const currentBackground = task.background.find(
+            (b) => b.createdDate === today(),
+          ) ?? { purpose: "", hypotheses: [""], plan: "", createdDate: today() };
 
-        return (
-          <Card
-            key={task.id}
-            taskId={task.id}
-            origin={task.origin}
-            pastBackground={pastBackground}
-            currentBackground={currentBackground}
-            createdDate={task.createdDate}
-            completedDate={task.completedDate}
-          />
-        );
-      })}
+          return (
+            <Card
+              key={task.id}
+              taskId={task.id}
+              origin={task.origin}
+              pastBackground={pastBackground}
+              currentBackground={currentBackground}
+              createdDate={task.createdDate}
+              completedDate={task.completedDate}
+            />
+          );
+        })}
+      </AnimatePresence>
     </div>
   );
 }
