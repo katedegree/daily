@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { today } from "./utils";
 
 export default function App() {
-  const [date, setDate] = useState("");
   const [synopsis, setSynopsis] = useState("");
   const { tasks, storeTask } = useTaskStore();
   const remainingTasks = Object.values(tasks).filter(
@@ -36,21 +35,11 @@ export default function App() {
 
   return (
     <div className="h-screen grid grid-cols-[2fr_3fr_3fr] grid-rows-[auto_1fr] gap-x-4 p-8">
-      <p className="pl-2 pb-2 text-sm">yyyymmdd</p>
+      <p className="pl-2 pb-2 text-sm">業務内容</p>
       <p className="pl-2 pb-2 text-sm">過去のTODO</p>
       <p className="pl-2 pb-2 text-sm">新規のTODO</p>
 
-      <div className="grid grid-rows-[auto_auto_1fr_auto]">
-        <input
-          className="w-full bg-input p-2 rounded-lg mb-8"
-          value={date}
-          onChange={(e) => {
-            const v = e.target.value.replace(/\D/g, "").slice(0, 8);
-            setDate(v);
-          }}
-          maxLength={8}
-        />
-        <p className="pl-2 pb-2 text-sm">業務内容</p>
+      <div className="grid grid-rows-[1fr_auto]">
         <textarea
           className="w-full bg-board p-4 rounded-lg overflow-y-auto"
           value={synopsis}
@@ -63,23 +52,27 @@ export default function App() {
           <button
             className="bg-input py-2 rounded-lg"
             onClick={async () => {
-              if (date.length !== 8) {
-                alert("日付を入力してください（yyyymmdd）");
-                return;
-              }
               if (!synopsis.trim()) {
                 alert("業務内容を入力してください");
                 return;
               }
+              const date = today();
               const remainingTasksText = remainingTasks
                 .map((task) => {
                   const pastBackground = task.background
                     .filter((b) => b.createdDate !== today())
-                    .sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1))[0];
+                    .sort((a, b) =>
+                      a.createdDate < b.createdDate ? 1 : -1,
+                    )[0];
                   if (!pastBackground) return null;
                   const currentBackground = task.background.find(
                     (b) => b.createdDate === today(),
-                  ) ?? { purpose: "", hypotheses: [""], plan: "", createdDate: today() };
+                  ) ?? {
+                    purpose: "",
+                    hypotheses: [""],
+                    plan: "",
+                    createdDate: today(),
+                  };
                   const completedStatus = task.completedDate ? "⭕️" : "❌";
                   const afterStatus = task.completedDate
                     ? `[達成できた要因]\n${currentBackground.purpose}`

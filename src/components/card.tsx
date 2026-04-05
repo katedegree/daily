@@ -1,7 +1,8 @@
-import { ChevronDown, Trash2, X } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import type { Background, Origin } from "../type";
 import { cn, today } from "../utils";
 import { useTaskStore } from "../use-task-store";
+import { HypothesesEditor } from "./hypotheses-editor";
 
 interface Props {
   taskId: string;
@@ -95,55 +96,10 @@ export function Card({
       {isToday && (
         <div>
           <p className="pb-2 text-sm">達成までの仮定</p>
-          <div className="flex flex-col gap-2">
-            {origin.hypotheses.map((hypothesis, index) => (
-              <div key={index} className="relative">
-                {index !== 0 && (
-                  <button
-                    className="absolute top-1 right-2"
-                    onClick={() => {
-                      updateOrigin(taskId, {
-                        ...origin,
-                        hypotheses: origin.hypotheses.filter(
-                          (_, i) => i !== index,
-                        ),
-                      });
-                    }}
-                  >
-                    <X size={20} />
-                  </button>
-                )}
-                <div className="flex items-center gap-2">
-                  <ChevronDown />
-                  <p className="text-sm pb-2">How</p>
-                </div>
-                <textarea
-                  className="min-h-16 field-sizing-content w-full p-2 bg-input rounded-lg"
-                  value={hypothesis}
-                  onChange={(e) => {
-                    updateOrigin(taskId, {
-                      ...origin,
-                      hypotheses: origin.hypotheses.map((h, i) =>
-                        i === index ? e.target.value : h,
-                      ),
-                    });
-                  }}
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => {
-                updateOrigin(taskId, {
-                  ...origin,
-                  hypotheses: [...origin.hypotheses, ""],
-                });
-              }}
-              className="w-full h-12 border border-dashed rounded-lg"
-            >
-              追加
-            </button>
-          </div>
+          <HypothesesEditor
+            hypotheses={origin.hypotheses}
+            onChange={(hypotheses) => updateOrigin(taskId, { ...origin, hypotheses })}
+          />
         </div>
       )}
 
@@ -196,58 +152,16 @@ export function Card({
         ) : (
           <>
             <p className="pb-2 text-sm">達成までの仮定（改善）</p>
-            <div className="flex flex-col gap-2 pb-8">
-              {currentBackground.hypotheses.map((hypothesis, index) => (
-                <div key={index} className="relative">
-                  {index !== 0 && (
-                    <button
-                      className="absolute top-1 right-2"
-                      onClick={() => {
-                        updateBackground(
-                          taskId,
-                          currentBackground.createdDate,
-                          {
-                            ...currentBackground,
-                            hypotheses: currentBackground.hypotheses.filter(
-                              (_, i) => i !== index,
-                            ),
-                          },
-                        );
-                      }}
-                    >
-                      <X size={20} />
-                    </button>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <ChevronDown />
-                    <p className="text-sm pb-2">How</p>
-                  </div>
-                  <textarea
-                    className="min-h-16 field-sizing-content w-full p-2 bg-input rounded-lg"
-                    value={hypothesis}
-                    onChange={(e) => {
-                      updateBackground(taskId, currentBackground.createdDate, {
-                        ...currentBackground,
-                        hypotheses: currentBackground.hypotheses.map((h, i) =>
-                          i === index ? e.target.value : h,
-                        ),
-                      });
-                    }}
-                  />
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => {
+            <div className="pb-8">
+              <HypothesesEditor
+                hypotheses={currentBackground.hypotheses}
+                onChange={(hypotheses) =>
                   updateBackground(taskId, currentBackground.createdDate, {
                     ...currentBackground,
-                    hypotheses: [...currentBackground.hypotheses, ""],
-                  });
-                }}
-                className="w-full h-12 border border-dashed rounded-lg"
-              >
-                追加
-              </button>
+                    hypotheses,
+                  })
+                }
+              />
             </div>
 
             <div>
