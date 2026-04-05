@@ -1,7 +1,7 @@
 import { useTaskStore } from "./use-task-store";
-import { SynopsisPanel, TaskList } from "./components";
+import { TaskList } from "./components";
 import { useEffect, useState } from "react";
-import { today } from "./utils";
+import { today, buildReportText } from "./utils";
 
 export default function App() {
   const [synopsis, setSynopsis] = useState("");
@@ -16,7 +16,12 @@ export default function App() {
   );
 
   const handleSave = () => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    const filtered = Object.fromEntries(
+      Object.entries(tasks).filter(
+        ([, t]) => !t.completedDate || t.completedDate >= today(),
+      ),
+    );
+    localStorage.setItem("tasks", JSON.stringify(filtered));
   };
 
   useEffect(() => {
@@ -39,13 +44,32 @@ export default function App() {
       <p className="pl-2 pb-2 text-sm">過去のTODO</p>
       <p className="pl-2 pb-2 text-sm">新規のTODO</p>
 
-      <SynopsisPanel
-        synopsis={synopsis}
-        onSynopsisChange={setSynopsis}
-        onSave={handleSave}
-        remainingTasks={remainingTasks}
-        newTasks={newTasks}
-      />
+      <div className="grid grid-rows-[1fr_auto]">
+        <textarea
+          className="w-full bg-board p-4 rounded-lg overflow-y-auto"
+          value={synopsis}
+          onChange={(e) => setSynopsis(e.target.value)}
+        />
+        <div className="grid grid-cols-2 gap-4 pt-4">
+          <button className="bg-input py-2 rounded-lg" onClick={handleSave}>
+            保存する
+          </button>
+          <button
+            className="bg-input py-2 rounded-lg"
+            onClick={async () => {
+              if (!synopsis.trim()) {
+                alert("業務内容を入力してください");
+                return;
+              }
+              await navigator.clipboard.writeText(
+                buildReportText(synopsis, remainingTasks, newTasks),
+              );
+            }}
+          >
+            日報をコピー
+          </button>
+        </div>
+      </div>
 
       <TaskList tasks={remainingTasks} />
       <TaskList tasks={newTasks} isNew />
