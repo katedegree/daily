@@ -63,6 +63,14 @@ export default function App() {
           <button
             className="bg-input py-2 rounded-lg"
             onClick={async () => {
+              if (date.length !== 8) {
+                alert("日付を入力してください（yyyymmdd）");
+                return;
+              }
+              if (!synopsis.trim()) {
+                alert("業務内容を入力してください");
+                return;
+              }
               const remainingTasksText = remainingTasks
                 .map((task) => {
                   const pastBackground = task.background

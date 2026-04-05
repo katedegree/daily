@@ -181,7 +181,7 @@ export function Card({
 
         {completedDate ? (
           <div>
-            <p className="pl-2 pb-2 text-sm">達成できた理由</p>
+            <p className="pl-2 pb-2 text-sm">達成できた要因</p>
             <textarea
               className="min-h-16 field-sizing-content w-full p-2 bg-input rounded-lg"
               value={currentBackground.purpose}
@@ -195,7 +195,7 @@ export function Card({
           </div>
         ) : (
           <>
-            <p className="pb-2 text-sm">達成までの仮定</p>
+            <p className="pb-2 text-sm">達成までの仮定（改善）</p>
             <div className="flex flex-col gap-2 pb-8">
               {currentBackground.hypotheses.map((hypothesis, index) => (
                 <div key={index} className="relative">
