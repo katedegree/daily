@@ -10,6 +10,14 @@ const generateId = (existing: Record<string, Task>): string => {
   return id;
 };
 
+const createTask = (id: string): Task => ({
+  id,
+  origin: { goal: "", reason: "", action: "", hypotheses: [""] },
+  background: [{ purpose: "", hypotheses: [""], plan: "", createdDate: today() }],
+  createdDate: today(),
+  completedDate: null,
+});
+
 interface TaskStore {
   tasks: Record<string, Task>;
   storeTask: () => void;
@@ -24,57 +32,12 @@ interface TaskStore {
 }
 
 export const useTaskStore = create<TaskStore>((set) => ({
-  tasks: {
-    aaaa: {
-      id: "aaaa",
-      origin: {
-        goal: "ゴール",
-        reason: "理由",
-        action: "行動",
-        hypotheses: [""],
-      },
-      background: [
-        {
-          purpose: "",
-          hypotheses: [""],
-          plan: "",
-          createdDate: "20000101",
-        },
-        {
-          purpose: "",
-          hypotheses: [""],
-          plan: "こうすればいい計画",
-          createdDate: "20000102",
-        },
-      ],
-      createdDate: "20000101",
-      completedDate: null,
-    },
-  },
+  tasks: {},
 
   storeTask: () =>
     set((prev) => {
       const id = generateId(prev.tasks);
-      const newTask: Task = {
-        id,
-        origin: {
-          goal: "",
-          reason: "",
-          action: "",
-          hypotheses: [""],
-        },
-        background: [
-          {
-            purpose: "",
-            hypotheses: [""],
-            plan: "",
-            createdDate: today(),
-          },
-        ],
-        createdDate: today(),
-        completedDate: null,
-      };
-      return { tasks: { [id]: newTask, ...prev.tasks } };
+      return { tasks: { [id]: createTask(id), ...prev.tasks } };
     }),
 
   destoryTask: (taskId) =>
@@ -97,7 +60,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
   updateOrigin: (taskId, origin) =>
     set((prev) => {
-      const task = prev.tasks[taskId];
+      const task = prev.tasks[taskId] ?? createTask(taskId);
       return {
         tasks: {
           ...prev.tasks,
@@ -108,7 +71,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
   updateBackground: (taskId, createdDate, background) =>
     set((prev) => {
-      const task = prev.tasks[taskId];
+      const task = prev.tasks[taskId] ?? createTask(taskId);
       const exists = task.background.some((b) => b.createdDate === createdDate);
       const newBackground = exists
         ? task.background.map((b) =>
