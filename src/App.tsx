@@ -15,16 +15,22 @@ function App() {
     (t) => t.createdDate === today(),
   );
 
-  // 今のタスクの状態をlocalStorageのtasksに保存する。
   const handleSave = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   };
 
-  // 初期ロード時にlocalStorageのtasksを参照する。
   useEffect(() => {
     const stored = localStorage.getItem("tasks");
     if (!stored) return;
     useTaskStore.setState({ tasks: JSON.parse(stored) });
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
   return (
