@@ -3,9 +3,13 @@ import type { Background, Origin, Task } from "./type";
 import { today } from "./utils";
 
 const generateId = (existing: Record<string, Task>): string => {
+  const chars = "0123456789";
   let id: string;
   do {
-    id = Math.random().toString(36).slice(2, 6);
+    id = Array.from(
+      { length: 4 },
+      () => chars[Math.floor(Math.random() * chars.length)],
+    ).join("");
   } while (id in existing);
   return id;
 };
@@ -13,7 +17,9 @@ const generateId = (existing: Record<string, Task>): string => {
 const createTask = (id: string): Task => ({
   id,
   origin: { goal: "", reason: "", action: "", hypotheses: [""] },
-  background: [{ purpose: "", hypotheses: [""], plan: "", createdDate: today() }],
+  background: [
+    { purpose: "", hypotheses: [""], plan: "", createdDate: today() },
+  ],
   createdDate: today(),
   completedDate: null,
 });

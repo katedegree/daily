@@ -10,7 +10,6 @@ interface Props {
   currentBackground: Background;
   createdDate: string;
   completedDate: string | null;
-  // isNew: boolean;
 }
 
 export function Card({
@@ -27,59 +26,71 @@ export function Card({
 
   return (
     <div className="flex flex-col gap-24 bg-board p-4 rounded-lg">
-      {isToday && (
-        <div className="bg-input py-4 rounded-lg relative">
-          <button
-            className="absolute top-2 right-2 flex items-center gap-2 p-1 rounded-lg bg-red-500"
-            onClick={() => {
-              destoryTask(taskId);
-            }}
-          >
-            <p className="text-sm">このTODOを削除する</p>
-            <Trash2 size={20} />
-          </button>
+      <div className="bg-input py-4 rounded-lg relative">
+        <button
+          className="absolute top-2 right-2 flex items-center gap-2 p-1 rounded-lg bg-red-500"
+          onClick={() => {
+            destoryTask(taskId);
+          }}
+        >
+          <p className="text-sm">このTODOを削除する</p>
+          <Trash2 size={20} />
+        </button>
 
-          <p className="pl-2 pb-2 text-sm border-b">目的</p>
-          <textarea
-            className="min-h-16 field-sizing-content w-full p-2"
-            value={origin.goal}
-            onChange={(e) => {
-              updateOrigin(taskId, {
-                ...origin,
-                goal: e.target.value,
-              });
-            }}
-          />
-          <p className="pl-2 pb-2 text-sm border-b">理由</p>
-          <textarea
-            className="min-h-16 field-sizing-content w-full p-2"
-            value={origin.reason}
-            onChange={(e) => {
-              updateOrigin(taskId, {
-                ...origin,
-                reason: e.target.value,
-              });
-            }}
-          />
-        </div>
-      )}
-
-      {!isToday && pastBackground && (
-        <div>
-          <p className="pl-2 pb-2 text-sm">実行計画</p>
-          <textarea
-            className="min-h-16 field-sizing-content w-full p-2 bg-input rounded-lg"
-            value={pastBackground.plan}
-            onChange={(e) => {
-              updateBackground(taskId, pastBackground.createdDate ?? "", {
-                ...pastBackground,
-                plan: e.target.value,
-              });
-            }}
-            readOnly
-          />
-        </div>
-      )}
+        {isToday || !pastBackground ? (
+          <>
+            <p className="pl-2 pb-2 text-sm border-b">目的</p>
+            <textarea
+              className="min-h-16 field-sizing-content w-full p-2"
+              value={origin.goal}
+              onChange={(e) => {
+                updateOrigin(taskId, {
+                  ...origin,
+                  goal: e.target.value,
+                });
+              }}
+            />
+            <p className="pl-2 pb-2 text-sm border-b">理由</p>
+            <textarea
+              className="min-h-16 field-sizing-content w-full p-2"
+              value={origin.reason}
+              onChange={(e) => {
+                updateOrigin(taskId, {
+                  ...origin,
+                  reason: e.target.value,
+                });
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <p className="pl-2 pb-2 text-sm border-b">目的</p>
+            <textarea
+              className="min-h-16 field-sizing-content w-full p-2"
+              value={origin.goal}
+              onChange={(e) => {
+                updateOrigin(taskId, {
+                  ...origin,
+                  goal: e.target.value,
+                });
+              }}
+              readOnly
+            />
+            <p className="pl-2 pb-2 text-sm border-b">実行計画</p>
+            <textarea
+              className="min-h-16 field-sizing-content w-full p-2"
+              value={pastBackground.plan}
+              onChange={(e) => {
+                updateBackground(taskId, pastBackground.createdDate ?? "", {
+                  ...pastBackground,
+                  plan: e.target.value,
+                });
+              }}
+              readOnly
+            />
+          </>
+        )}
+      </div>
 
       {isToday && (
         <div>
