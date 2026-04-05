@@ -27,7 +27,7 @@ export function Card({
   const isToday = createdDate === today();
 
   return (
-    <div className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+    <div className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shrink-0">
       <div className="px-4 pt-3 pb-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
