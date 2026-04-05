@@ -8,13 +8,24 @@ import { AnimatePresence } from "framer-motion";
 interface Props {
   tasks: Task[];
   isNew?: boolean;
+  label?: string;
+  count?: number;
+  className?: string;
 }
 
-export function TaskList({ tasks, isNew = false }: Props) {
+export function TaskList({ tasks, isNew = false, label, count, className = "" }: Props) {
   const { storeTask } = useTaskStore();
 
   return (
-    <div className="flex flex-col gap-3 overflow-y-auto pt-4 min-h-0">
+    <div className={`flex flex-col gap-3 overflow-y-auto pt-4 min-h-0 ${className}`}>
+      {label && (
+        <div className="flex items-center gap-2 pb-3 border-b border-zinc-800 md:hidden">
+          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">{label}</span>
+          {count !== undefined && (
+            <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full tabular-nums">{count}</span>
+          )}
+        </div>
+      )}
       {isNew && (
         <button
           type="button"
