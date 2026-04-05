@@ -27,15 +27,20 @@ export function Card({
   const isToday = createdDate === today();
 
   return (
-    <div className="flex flex-col gap-24 bg-board p-4 rounded-lg">
-      <div className="bg-input py-4 rounded-lg relative">
-        <button
-          className="absolute top-2 right-2 flex items-center gap-2 p-1 rounded-lg bg-red-500"
-          onClick={() => destoryTask(taskId)}
-        >
-          <p className="text-sm">このTODOを削除する</p>
-          <Trash2 size={20} />
-        </button>
+    <div className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+      <div className="px-4 pt-3 pb-4">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
+            #{taskId}
+          </span>
+          <button
+            className="flex items-center gap-1 text-xs text-zinc-500 hover:text-red-400 hover:bg-red-500/10 px-2 py-1 rounded-lg"
+            onClick={() => destoryTask(taskId)}
+          >
+            <Trash2 size={12} />
+            削除
+          </button>
+        </div>
 
         {isToday ? (
           <>
@@ -61,8 +66,8 @@ export function Card({
       </div>
 
       {isToday && (
-        <div>
-          <p className="pb-2 text-sm">達成までの仮定</p>
+        <div className="px-4 py-4 border-t border-zinc-800">
+          <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">達成までの仮定</p>
           <HypothesesEditor
             hypotheses={origin.hypotheses}
             onChange={(hypotheses) => updateOrigin(taskId, { ...origin, hypotheses })}
@@ -71,24 +76,28 @@ export function Card({
       )}
 
       {isToday && (
-        <LabeledTextarea
-          label="行動"
-          value={origin.action}
-          onChange={(v) => updateOrigin(taskId, { ...origin, action: v })}
-        />
+        <div className="px-4 py-4 border-t border-zinc-800">
+          <LabeledTextarea
+            label="行動"
+            value={origin.action}
+            onChange={(v) => updateOrigin(taskId, { ...origin, action: v })}
+          />
+        </div>
       )}
 
-      <div>
-        <div className="flex gap-8 items-center pb-8">
-          <p className="text-sm">達成状況</p>
+      <div className="px-4 py-4 border-t border-zinc-800">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">達成状況</span>
           <button
             className={cn(
-              "w-16 p-1 rounded-full flex",
-              completedDate ? "bg-blue-400 justify-end" : "bg-white justify-start",
+              "w-11 h-6 rounded-full flex items-center transition-all duration-200",
+              completedDate
+                ? "bg-indigo-500 justify-end pr-0.5"
+                : "bg-zinc-700 justify-start pl-0.5",
             )}
             onClick={() => toggleCompleted(taskId)}
           >
-            <div className="rounded-full w-6 h-6 bg-input" />
+            <div className="rounded-full w-5 h-5 bg-white shadow-sm" />
           </button>
         </div>
 
@@ -105,8 +114,8 @@ export function Card({
           />
         ) : (
           <>
-            <p className="pb-2 text-sm">達成までの仮定（改善）</p>
-            <div className="pb-8">
+            <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">達成までの仮定（改善）</p>
+            <div className="mb-4">
               <HypothesesEditor
                 hypotheses={currentBackground.hypotheses}
                 onChange={(hypotheses) =>

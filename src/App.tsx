@@ -39,23 +39,35 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen grid grid-cols-[2fr_3fr_3fr] grid-rows-[auto_1fr] gap-x-4 p-8">
-      <p className="pl-2 pb-2 text-sm">業務内容</p>
-      <p className="pl-2 pb-2 text-sm">過去のTODO</p>
-      <p className="pl-2 pb-2 text-sm">新規のTODO</p>
+    <div className="h-screen grid grid-cols-[2fr_3fr_3fr] grid-rows-[auto_1fr] gap-x-3 px-6 py-5">
+      <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
+        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">業務内容</span>
+      </div>
+      <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
+        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">過去のTODO</span>
+        <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full tabular-nums">{remainingTasks.length}</span>
+      </div>
+      <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
+        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">新規のTODO</span>
+        <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full tabular-nums">{newTasks.length}</span>
+      </div>
 
-      <div className="grid grid-rows-[1fr_auto]">
+      <div className="grid grid-rows-[1fr_auto] gap-3 pt-4 min-h-0">
         <textarea
-          className="w-full bg-board p-4 rounded-lg overflow-y-auto"
+          className="w-full bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-xl overflow-y-auto text-sm leading-relaxed focus:border-zinc-600 transition-colors placeholder:text-zinc-600"
           value={synopsis}
           onChange={(e) => setSynopsis(e.target.value)}
+          placeholder="今日の業務内容を入力..."
         />
-        <div className="grid grid-cols-2 gap-4 pt-4">
-          <button className="bg-input py-2 rounded-lg" onClick={handleSave}>
-            保存する
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-2.5 rounded-xl text-sm font-medium"
+            onClick={handleSave}
+          >
+            保存
           </button>
           <button
-            className="bg-input py-2 rounded-lg"
+            className="bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-medium"
             onClick={async () => {
               if (!synopsis.trim()) {
                 alert("業務内容を入力してください");

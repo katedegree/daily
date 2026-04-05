@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @utility bg-board {
-  @apply bg-stone-900;
+  @apply bg-zinc-900;
 }
 
 @utility bg-input {
-  @apply bg-stone-800;
+  @apply bg-zinc-800/50;
 }
 
 body {
-  @apply bg-gray-950 text-stone-50 *:**:[&::-webkit-scrollbar]:hidden;
+  @apply bg-zinc-950 text-zinc-100 *:**:[&::-webkit-scrollbar]:hidden;
 }
 
 input,
 textarea,
 button {
-  @apply outline-none
+  @apply outline-none;
 }
 
 textarea {
@@ -23,5 +23,5 @@ textarea {
 }
 
 button {
-  @apply cursor-pointer
+  @apply cursor-pointer transition-colors duration-150;
 }
