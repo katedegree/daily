@@ -3,7 +3,7 @@ import { Card } from "./components";
 import { useEffect, useState } from "react";
 import { today } from "./utils";
 
-function App() {
+export default function App() {
   const [synopsis, setSynopsis] = useState("");
   const { tasks, storeTask } = useTaskStore();
   const remainingTasks = Object.values(tasks).filter(
@@ -118,5 +118,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
